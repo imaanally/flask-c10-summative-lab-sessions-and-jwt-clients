@@ -4,16 +4,22 @@ import Login from "../pages/Login";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/check_session").then((r) => {
-      if (r.ok) {
-        r.json().then((user) => setUser(user));
-      }
-    });
+    fetch("/check_session")
+      .then((r) => r.json())
+      .then((user) => {
+        setUser(user);
+        setLoading(false);
+      });
   }, []);
 
-  if (!user) return <Login onLogin={setUser} />;
+  if (loading) return <p>Loading...</p>;
+
+  if (!user || !user.id) {
+    return <Login onLogin={setUser} />;
+  }
 
   return (
     <>
